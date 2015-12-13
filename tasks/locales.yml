@@ -1,0 +1,64 @@
+---
+# Fails miserably
+# - name: Generate locales
+#   locale_gen:
+#     name: "{{ item }}"
+#   with_items: ce_locale_gen
+
+# locale -a shows en_US.utf8 for en_US.UTF-8
+- name: Get if locale exists
+  shell: locale -a | grep -i "^{{ locale|replace("-","") }}$"
+  register: result
+  failed_when: False
+  changed_when: False
+  when: ansible_os_family == 'Debian' and
+        locale is defined
+
+- name: Add to locale.gen
+  lineinfile:
+    dest: /etc/locale.gen
+    line: "{{ locale_gen }}"
+    owner: root
+    mode: 0644
+  when: result.rc > 0 and
+        ansible_distribution == 'Debian' and
+        locale is defined
+
+- name: Generate locale
+  command: locale-gen
+  when: result.rc > 0 and
+        ansible_distribution == 'Debian' and
+        locale is defined
+
+- name: Generate locale
+  command: locale-gen {{ locale }}
+  when: result.rc > 0 and
+        ansible_distribution == 'Ubuntu' and
+        locale is defined
+
+- name: set default locale (RedHat)
+  lineinfile:
+    regexp: '^LANG=.*'
+    line: 'LANG="{{ locale_default }}"'
+    dest: /etc/sysconfig/i18n
+    create: True
+  when: ansible_os_family == 'RedHat' and
+        locale_default is defined
+
+- name: set default locale (Debian)
+  lineinfile:
+    regexp: '^LANG=.*'
+    line: 'LANG={{ locale_default }}'
+    dest: /etc/default/locale
+    create: True
+  when: ansible_os_family == 'Debian' and
+        locale_default is defined
+
+- name: set default locale (RedHat)
+  lineinfile:
+    regexp: '^LANG=.*'
+    line: 'LANG={{ locale_default }}'
+    dest: /etc/default/locale
+    create: True
+  when: ansible_os_family == 'RedHat' and
+        locale_default is defined

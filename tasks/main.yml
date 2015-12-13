@@ -1,0 +1,5 @@
+---
+- name: include locales.yml
+  include: locales.yml
+  tags:
+    - locales

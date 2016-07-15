@@ -1,9 +1,12 @@
-Generate Linux system locales and sets the default locale.
+# ansible-locale
+* * *
 
-In order to generate several locale definitions call the role several times.
+## Description
+Generate locales and set system default locale.
 
-variables (with examples):
+## Variables
 
-- locale: en_US.UTF-8
-- locale_gen: en_US.UTF-8 UTF-8 (locale.gen file format)
-- locale_default: en_US.UTF-8 (default system locale)
+Optional:
+- _locale_: list with locales to be available on the system.
+- _locale_default_: default locale to be set on the system.
+

@@ -1,0 +1,24 @@
+---
+- name: Generate locale
+  locale_gen:
+    name: "{{ item }}"
+  with_items: locale
+  when: locale is defined
+
+- name: RedHat | set default locale
+  lineinfile:
+    regexp: '^LANG=.*'
+    line: 'LANG="{{ locale_default }}"'
+    dest: /etc/sysconfig/i18n
+    create: True
+    mode: 0644
+  when: ansible_os_family == 'RedHat' and locale_default is defined
+
+- name: Debian | set default locale
+  lineinfile:
+    regexp: '^LANG=.*'
+    line: 'LANG={{ locale_default }}'
+    dest: /etc/default/locale
+    create: True
+    mode: 0644
+  when: ansible_os_family == 'Debian' and locale_default is defined

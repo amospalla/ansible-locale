@@ -1,8 +1,8 @@
 ---
 - name: Generate locale
   locale_gen:
-    name: "{{ item }}"
-  with_items: locale
+    name: '{{ item }}'
+  with_items: '{{ locale }}'
   when: locale is defined and ansible_os_family == 'Debian'
 
 - name: RedHat | set default locale
